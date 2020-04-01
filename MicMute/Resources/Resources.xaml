@@ -2,6 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:tb="http://www.hardcodet.net/taskbar"
                     xmlns:local="clr-namespace:MicMute.Resources">
+
     <!--
         The "shared" directive is needed if we reopen the window a few times - WPF will otherwise
         reuse the same context menu (which is a resource) again (which will have its DataContext set to the old TaskbarIcon)

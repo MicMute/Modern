@@ -85,9 +85,14 @@
     <Compile Include="KeyboardHook\ModifierKeys.cs" />
     <Compile Include="Logic\Core.cs" />
     <Compile Include="Logic\MicStates.cs" />
+    <Compile Include="Resources\ImageResources.cs" />
     <Compile Include="ViewModel\AudioObservable.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Page Include="Resources\ImageResources.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Resources\Resources.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

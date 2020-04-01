@@ -28,7 +28,7 @@
 
         <Button Margin="10" Grid.Row="0" Height="100" Width="100"
                 Command="{Binding ToggleMuteCommand}">
-            <Image Source="/MicMute;component/Resources/unmuted_large.png"/>
+            <Image Source="{Binding MicImage, UpdateSourceTrigger=PropertyChanged}"/>
         </Button>
 
         <ListView Margin="10" Grid.Row="1" SelectionMode="Extended"

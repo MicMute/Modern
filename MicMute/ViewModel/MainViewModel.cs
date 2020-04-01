@@ -2,9 +2,11 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using MicMute.Logic;
 using MicMute.Observables;
+using MicMute.Resources;
 using NAudio.CoreAudioApi;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace MicMute.ViewModel
 {
@@ -23,7 +25,7 @@ namespace MicMute.ViewModel
     public class MainViewModel : ViewModelBase
     {
         private readonly Core _core;
-        private RelayCommand _toggleMuteCommand;
+        private ICommand _toggleMuteCommand;
 
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
@@ -37,6 +39,11 @@ namespace MicMute.ViewModel
             }
 
             this._core = core;
+            _core.OnVolumeNotification += (data) =>
+            {
+                RaisePropertyChanged(() => this.IsMuted);
+                RaisePropertyChanged(() => this.MicImage);
+            };
 
             foreach (MMDevice device in this._core.Devices)
             {
@@ -52,16 +59,18 @@ namespace MicMute.ViewModel
             set
             {
                 this._core.SwitchMicState(value ? MicStates.Muted : MicStates.Unmuted);
-                RaisePropertyChanged();
+                this.RaisePropertyChanged();
+                this.RaisePropertyChanged(() => this.MicImage);
             }
         }
+
+        public ImageSource MicImage => this.IsMuted ? ImageResources.Muted.Source : ImageResources.Unmuted.Source;
 
         public ICommand ToggleMuteCommand => this._toggleMuteCommand ?? (this._toggleMuteCommand = new RelayCommand(this.ToggleMuteState));
 
         private void ToggleMuteState()
         {
-            bool muted = this._core.AreAllMicsMuted;
-            this._core.SwitchMicState(muted ? MicStates.Unmuted : MicStates.Muted);
+            this.IsMuted = !this.IsMuted;
         }
     }
 }
