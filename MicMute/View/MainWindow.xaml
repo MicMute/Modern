@@ -1,0 +1,40 @@
+﻿<Window x:Class="MicMute.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MicMute"
+        mc:Ignorable="d"
+        Title="MicMute" Height="400" Width="400" 
+        DataContext="{Binding Source={StaticResource Locator}, Path=MainViewModel}"
+        SizeToContent="Height" ResizeMode="NoResize">
+    <Window.Resources>
+
+        <DataTemplate x:Key="CheckedItemTemplate" >
+            <WrapPanel>
+                <!--<CheckBox Focusable="False" IsChecked="{Binding Selected}" VerticalAlignment="Center" />-->
+                <CheckBox Focusable="False" IsChecked="{Binding IsMuted, UpdateSourceTrigger=PropertyChanged}" 
+                          VerticalAlignment="Center" ToolTip="Muted"/>
+                <ContentPresenter Content="{Binding FriendlyName, Mode=OneTime}"  Margin="2,0" />
+            </WrapPanel>
+        </DataTemplate>
+
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" MaxHeight="200"/>
+        </Grid.RowDefinitions>
+
+        <Button Margin="10" Grid.Row="0" Height="100" Width="100"
+                Command="{Binding ToggleMuteCommand}">
+            <Image Source="/MicMute;component/Resources/unmuted_large.png"/>
+        </Button>
+
+        <ListView Margin="10" Grid.Row="1" SelectionMode="Extended"
+                  ItemsSource="{Binding AudioEndPoints}"
+                  ItemTemplate="{StaticResource CheckedItemTemplate}">
+
+        </ListView>
+    </Grid>
+</Window >
