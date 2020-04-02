@@ -1,10 +1,14 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using Hardcodet.Wpf.TaskbarNotification;
 using MicMute.Logic;
 using MicMute.Observables;
 using MicMute.Resources;
 using NAudio.CoreAudioApi;
+using System;
 using System.Collections.ObjectModel;
+using System.Drawing;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -26,6 +30,9 @@ namespace MicMute.ViewModel
     {
         private readonly Core _core;
         private ICommand _toggleMuteCommand;
+        private ICommand toggleWindowStateCommand;
+        private WindowState windowState;
+        private ICommand closeCommand;
 
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
@@ -39,11 +46,7 @@ namespace MicMute.ViewModel
             }
 
             this._core = core;
-            _core.OnVolumeNotification += (data) =>
-            {
-                RaisePropertyChanged(() => this.IsMuted);
-                RaisePropertyChanged(() => this.MicImage);
-            };
+            this._core.OnVolumeNotification += (data) => UpdateMicProperties();
 
             foreach (MMDevice device in this._core.Devices)
             {
@@ -59,18 +62,60 @@ namespace MicMute.ViewModel
             set
             {
                 this._core.SwitchMicState(value ? MicStates.Muted : MicStates.Unmuted);
-                this.RaisePropertyChanged();
-                this.RaisePropertyChanged(() => this.MicImage);
+
+                this.UpdateMicProperties();
+
+                if (this.IsMuted)
+                {
+                    ShowBalloonAction(Properties.Resources.TooltipTitle, Properties.Resources.TooltipMuted, BalloonIcon.Info);
+                }
+                else
+                {
+                    ShowBalloonAction(Properties.Resources.TooltipTitle, Properties.Resources.TooltipUnmuted, BalloonIcon.Info);
+                }
             }
+        }
+
+        private void UpdateMicProperties()
+        {
+            this.RaisePropertyChanged(() => this.IsMuted);
+            this.RaisePropertyChanged(() => this.MicImage);
+            this.RaisePropertyChanged(() => this.TaskbarIcon);
         }
 
         public ImageSource MicImage => this.IsMuted ? ImageResources.Muted.Source : ImageResources.Unmuted.Source;
 
-        public ICommand ToggleMuteCommand => this._toggleMuteCommand ?? (this._toggleMuteCommand = new RelayCommand(this.ToggleMuteState));
+        public ICommand ToggleMuteCommand => this._toggleMuteCommand ?? (this._toggleMuteCommand = new RelayCommand(() => this.IsMuted = !this.IsMuted));
+        
+        public ICommand ToggleWindowStateCommand
+            => this.toggleWindowStateCommand ?? (this.toggleWindowStateCommand = new RelayCommand(this.ToggleWindowState));
 
-        private void ToggleMuteState()
+        private void ToggleWindowState()
         {
-            this.IsMuted = !this.IsMuted;
+            this.WindowState = this.WindowState != WindowState.Minimized ? WindowState.Minimized : WindowState.Normal;
         }
+
+        public WindowState WindowState
+        {
+            get => this.windowState;
+            set => this.Set(ref this.windowState, value);
+        }
+
+        public ImageSource TaskbarIcon => this.IsMuted ? ImageResources.IconMutedImage.Source : ImageResources.IconUnmutedImage.Source;
+
+        public Action<string, string, BalloonIcon> ShowBalloonAction { get; set; }
+
+        /// <summary>
+        /// States whether the program can be closed.
+        /// </summary>
+        public bool CanClose { get; private set; }
+
+        public ICommand CloseCommand => this.closeCommand ?? (this.closeCommand = 
+            new RelayCommand(() =>
+            {
+                this.CanClose = true;
+                //this.CloseTrigger = true;
+            }));
+
     }
 }

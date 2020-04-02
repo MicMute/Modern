@@ -2,12 +2,16 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MicMute"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
         mc:Ignorable="d"
         Title="MicMute" Height="400" Width="400" 
         DataContext="{Binding Source={StaticResource Locator}, Path=MainViewModel}"
-        SizeToContent="Height" ResizeMode="NoResize">
+        WindowState="{Binding WindowState, Mode=TwoWay}"
+        SizeToContent="Height" ResizeMode="CanMinimize" 
+        Loaded="Window_Loaded" StateChanged="Window_StateChanged" Closing="Window_Closing">
     <Window.Resources>
 
         <DataTemplate x:Key="CheckedItemTemplate" >
@@ -34,7 +38,28 @@
         <ListView Margin="10" Grid.Row="1" SelectionMode="Extended"
                   ItemsSource="{Binding AudioEndPoints}"
                   ItemTemplate="{StaticResource CheckedItemTemplate}">
-
         </ListView>
+
+        <tb:TaskbarIcon x:Name="NotifyIcon"
+                        DoubleClickCommand="{Binding ToggleWindowStateCommand}"
+                        IconSource="{Binding TaskbarIcon, UpdateSourceTrigger=PropertyChanged}"
+                        ToolTipText="MicMute">
+            <i:Interaction.Behaviors>
+                <local:BalloonBehavior ShowBalloonAction="{Binding ShowBalloonAction, Mode=OneWayToSource}" />
+            </i:Interaction.Behaviors>
+            <tb:TaskbarIcon.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Muted" IsCheckable="True" IsChecked="{Binding IsMuted}" />
+                    <MenuItem Header="Keep State" IsCheckable="True" IsChecked="{Binding IsForced}" />
+                    <MenuItem Header="Stay on top" IsCheckable="True" IsChecked="{Binding StayOnTop}" />
+                    <Separator />
+                    <MenuItem Header="Settings..." Command="{Binding OpenSettingsWindowCommand}"/>
+                    <Separator />
+                    <MenuItem Header="Support on Github" Command="{Binding SupportOnGitHubCommand}"/>
+                    <Separator />
+                    <MenuItem Header="Exit" Command="{Binding ExitApplicationCommand}" />
+                </ContextMenu>
+            </tb:TaskbarIcon.ContextMenu>
+        </tb:TaskbarIcon>
     </Grid>
 </Window >

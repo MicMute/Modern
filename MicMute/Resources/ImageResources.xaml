@@ -6,4 +6,7 @@
     <Image Source="muted_large.png" x:Key="Muted"/>
     <Image Source="unmuted_large.png" x:Key="Unmuted"/>
 
+    <Image Source="microphone_muted.ico" x:Key="IconMuted"/>
+    <Image Source="microphone_unmuted.ico" x:Key="IconUnmuted"/>
+
 </ResourceDictionary>
