@@ -99,6 +99,15 @@ namespace MicMute.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Microphone state was enforced.
+        /// </summary>
+        internal static string TooltipStateForced {
+            get {
+                return ResourceManager.GetString("TooltipStateForced", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to MicMute.
         /// </summary>
         internal static string TooltipTitle {

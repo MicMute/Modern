@@ -136,4 +136,7 @@
   <data name="TooltipUnmuted" xml:space="preserve">
     <value>Microphones are unmuted</value>
   </data>
+  <data name="TooltipStateForced" xml:space="preserve">
+    <value>Microphone state was enforced</value>
+  </data>
 </root>
